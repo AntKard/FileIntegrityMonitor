@@ -1,3 +1,19 @@
 /target/
+<<<<<<< HEAD
 .DS_Store
 *.db
+=======
+
+# Eclipse-specific metadata
+/.settings/
+/.project
+/.classpath
+
+# Java compiled files
+*.class
+*.war
+*.ear
+
+# SQLite database files
+*.db
+>>>>>>> fd9d85d (Update .gitignore)
