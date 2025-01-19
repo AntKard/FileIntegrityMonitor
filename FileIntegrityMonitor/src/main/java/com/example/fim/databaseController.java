@@ -35,7 +35,7 @@ public class databaseController {
 		
 		connection = connect();
 		
-//		dropTable("files");
+//		dropTable("files");   USED FOR TESTING
 		
 		String createTableSQL = "CREATE TABLE IF NOT EXISTS files ("
 				+ "id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -53,7 +53,9 @@ public class databaseController {
 		}
 	}
 	
-	
+	/*
+	 * 	Method is used for testing purposes to clear database.
+	 */
 	private void dropTable(String tableName) {
 		String query = "DROP TABLE IF EXISTS " + tableName;
 		try (Statement stmt = connection.createStatement()) {
@@ -64,7 +66,9 @@ public class databaseController {
 		}
 	}
 	
-	
+	/*
+	 * 	 Method is used to save file path, hash value, last modified date, and monitor date to database.
+	 */
 	public void saveFileHash(String filePath, String hashValue, long lastModified, Timestamp monitorTimeStamp) {
 		
 		String insertSQL = "INSERT OR REPLACE INTO files (file_path, hash_value, last_modified, monitor_date) VALUES (?, ?, ?, ?)";
@@ -84,24 +88,10 @@ public class databaseController {
 		}
 	}
 	
-	
-	public String getStoredHash(String filePath) {
-		String query = "SELECT hash_value FROM files WHERE file_path = ?";
-		try (PreparedStatement prepStatement = connection.prepareStatement(query)) {
-			
-			prepStatement.setString(1,  filePath);
-			ResultSet resultSet = prepStatement.executeQuery();
-			if (resultSet.next()) {
-				return resultSet.getString("hash_value");
-			}
-		} catch (Exception e) {
-			System.err.println("Failed to retrieve file hash: " + e.getMessage());
-		}
-		
-		return null;
-	}
-	
-	
+	/*
+	 * 	Method is used to access hashedFiles list in database
+	 * 	and returns list.
+	 */
 	private List<FIMApp.hashedFile> accessHashedFiles() {
 		List<FIMApp.hashedFile> hashedFileList = new ArrayList<>();
 		
@@ -110,7 +100,7 @@ public class databaseController {
 		try (Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(query)) {
 			
-			
+			// While loop iterates through results and adds each hashed file object to hashed file list
 			while (rs.next()) {
 
 				FIMApp.hashedFile hashedFile = new FIMApp.hashedFile();
@@ -127,7 +117,10 @@ public class databaseController {
 		return null;
 	}
 	
-	
+	/*
+	 * 	Method is used to call accessHashedFile method.
+	 * 	Returns list of hashed files.
+	 */
 	public List<FIMApp.hashedFile> getHashedFiles() {
 		List<FIMApp.hashedFile> returnList = accessHashedFiles();
 		

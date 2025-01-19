@@ -5,19 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.sql.Timestamp;
-
-//import java.awt.Color;
-
 import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 
 
@@ -29,9 +18,11 @@ public class FIMApp extends Application {
 	
     @Override
     public void start(Stage primaryStage) throws IOException {
+    	// initialize database
     	db = new databaseController();
     	db.initializeDatabase();
 
+    	// initialize GUI
     	gui = new fimGUI();
     	gui.initialize(primaryStage, this);
     	
@@ -99,12 +90,21 @@ public class FIMApp extends Application {
     		return this.monitorTimeStamp;
     	}
      	
+    	/*
+    	 * 	Method used to access hashFile method.
+    	 * 	Returns comparisonHash String.
+    	 */
     	public String getComparisonHash(File file) {
     		
     		hashFile(file, true);
     		return this.comparisonHash;
     	}
     	
+    	/*
+    	 * 	Method is used to hash a file passed in as argument.
+    	 * 	Either saves a non-comparisonHash to database
+    	 * 	or a comparisonHash to memory object.
+    	 */
     	private void hashFile(File file, boolean isComparisonHash) {
     		
     		try {
@@ -140,6 +140,10 @@ public class FIMApp extends Application {
     		}
     	}
     	
+    	/*
+    	 * 	Method is used to access hashFile method.
+    	 * 	Hash value of file stored in database.
+    	 */
     	public void accessHashFile(File file) {
 
     		hashFile(file, false);

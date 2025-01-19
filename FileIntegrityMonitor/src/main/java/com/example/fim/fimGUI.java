@@ -1,14 +1,10 @@
 package com.example.fim;
 
 
-import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -18,11 +14,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
@@ -36,12 +28,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-
-import java.awt.TextArea;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+
 
 
 class fimGUI implements EventHandler<ActionEvent> {
@@ -91,7 +81,11 @@ class fimGUI implements EventHandler<ActionEvent> {
 	private Text output;
 	
 	
-	
+	/*
+	 * 	Method is used to initialize GUI. Sets up GUI
+	 * 	display size, title, icons, and makes it so it is
+	 * 	not resizable. Method calls switchScene to display main menu.
+	 */
 	public void initialize(Stage mainStage, FIMApp fim) throws IOException {
 		
 		fimGUI.mainStage = mainStage;
@@ -105,11 +99,21 @@ class fimGUI implements EventHandler<ActionEvent> {
 	
 	}
 	
+	
+	/*
+	 * 	Method is used to switch between scenes.
+	 */
 	public static void switchScene(Scene newScene) {
 		mainStage.setScene(newScene);
 		mainStage.show();
 	}
 	
+	
+	/*
+	 * 	Method is used to set scene of Main Menu. Displays text prompting user
+	 * 	to pick one of two options, "View and Compare Baseline" or "Create New Baseline."
+	 * 	Returns scene.
+	 */
 	public Scene mainMenu() {
 		
 		bgImage = new Image(getClass().getResource("Resources/background.jpeg").toExternalForm());
@@ -122,7 +126,7 @@ class fimGUI implements EventHandler<ActionEvent> {
 		createNewBaseline = new Button();
 		createButton(createNewBaseline, "Create New Baseline", "vista-button", 300);
 		
-		
+		// Fonts used for buttons, labels, texts
 		segoeFont = Font.loadFont(getClass().getResourceAsStream("Resources/Segoe UI/SEGOEUIL.TTF"), 47);
 		segoeBold = Font.loadFont(getClass().getResourceAsStream("Resources/Segoe UI/SEGOEUI.TTF"), 20);
 		segoeLabel = Font.loadFont(getClass().getResourceAsStream("Resources/Segoe UI/SEGOEUIL.TTF"), 25);
@@ -130,16 +134,16 @@ class fimGUI implements EventHandler<ActionEvent> {
 		
 		background = new BackgroundImage(
 				bgImage,
-				BackgroundRepeat.NO_REPEAT, // Repeat X
-	            BackgroundRepeat.NO_REPEAT, // Repeat Y
-	            BackgroundPosition.CENTER,  // Position
+				BackgroundRepeat.NO_REPEAT, 		// Repeat X
+	            BackgroundRepeat.NO_REPEAT, 		// Repeat Y
+	            BackgroundPosition.CENTER,  		// Position
 	            new BackgroundSize(
-	                BackgroundSize.AUTO, 	// Width
-	                BackgroundSize.AUTO, 	// Height
-	                false,               	// Cover width
-	                false,               	// Cover height
-	                true,                	// Contain width proportionally
-	                true                 	// Contain height proportionally
+	                BackgroundSize.AUTO, 			// Width
+	                BackgroundSize.AUTO, 			// Height
+	                false,               			// Cover width
+	                false,               			// Cover height
+	                true,                			// Contain width proportionally
+	                true                 			// Contain height proportionally
 	            )
 	        );
 		
@@ -167,9 +171,10 @@ class fimGUI implements EventHandler<ActionEvent> {
 		root.getChildren().add(vbox);
 		
 		mainMenu = new Scene(root, 1600, 700);
+		// fetching CSS resource
 		mainMenu.getStylesheets().add(getClass().getResource("Resources/vista-button.css").toExternalForm());
 		
-
+		
 		viewAndCompBaseline.setStyle("-fx-border-color: #1ab3ff;");
 		viewAndCompBaseline.setFont(segoeBold);
 		createNewBaseline.setFont(segoeBold);
@@ -179,6 +184,12 @@ class fimGUI implements EventHandler<ActionEvent> {
 	}
 	
 	
+	/*
+	 * 	Method is used to set scene for the "View and Compare Baseline"
+	 * 	page. Displays table of hashed files with file path, hash value, 
+	 * 	last modified date, and last monitored date. Displays "Compare" 
+	 * 	and "Back" buttons. Returns scene.	
+	 */
 	public Scene viewAndCompareBaseline() {
 		
 		root = new StackPane();
@@ -200,12 +211,13 @@ class fimGUI implements EventHandler<ActionEvent> {
 		compBox.setAlignment(Pos.CENTER);
 		compBox.getChildren().addAll(compareButton, compLabel);
 		
-		
+		// List created holding hashedFiles to display hashed files list in table
 		List<FIMApp.hashedFile> hashedFilesList = FIMApp.db.getHashedFiles();
 		
 		
 		TableView<FIMApp.hashedFile> hashedFilesTable = new TableView<>();
 		
+		// Columns for table
 		TableColumn<FIMApp.hashedFile, String> columnFilePath = new TableColumn<>("File Path");
 		columnFilePath.setCellValueFactory(new PropertyValueFactory<>("filePath"));
 		
@@ -224,6 +236,7 @@ class fimGUI implements EventHandler<ActionEvent> {
 				
 		hashedFilesTable.getColumns().addAll(columns);
 		
+		// Making list observable
 		ObservableList<FIMApp.hashedFile> fileList = FXCollections.observableArrayList(hashedFilesList);
 		
 		hashedFilesTable.setItems(fileList);
@@ -241,11 +254,14 @@ class fimGUI implements EventHandler<ActionEvent> {
 		root.getChildren().add(viewAndCompLayout);
 		
 		Scene viewScene = new Scene(root, 1600, 700);
+		// fetching CSS resource
 		viewScene.getStylesheets().add(getClass().getResource("Resources/vista-button.css").toExternalForm());
 		
 		backButton.setFont(segoeBold);
 		compareButton.setFont(segoeBold);
 		compareButton.setStyle("-fx-border-color: #1ab3ff;");
+		
+		// comparing hashed files
 		compareButton.setOnAction( e -> {
 			
 			FIMApp.hashedFile selectedFile = hashedFilesTable.getSelectionModel().getSelectedItem();
@@ -254,6 +270,7 @@ class fimGUI implements EventHandler<ActionEvent> {
 				String filePath = selectedFile.getFilePath();
 				String storedHash = selectedFile.getHashValue();
 				
+				// pop-ups for comparison results
 				try {
 					String currentHash = selectedFile.getComparisonHash(new File(filePath));
 					
@@ -283,6 +300,12 @@ class fimGUI implements EventHandler<ActionEvent> {
 		
 	}
 	
+	
+	/*
+	 * 	Method shows a pop-up when a baseline is compared.
+	 * 	Pop-up will show that integrity of a file has been maintained,
+	 * 	has been corrupted, or no comparison can be made.
+	 */
 	private void showPopup(String title, String message, Alert.AlertType alertType) {
 		Alert alert = new Alert(alertType);
 		alert.setTitle(title);
@@ -291,6 +314,13 @@ class fimGUI implements EventHandler<ActionEvent> {
 		alert.showAndWait();
 	}
 	
+	
+	/*
+	 * 	Method is used to create a scene that displays the 
+	 * 	"Create New Baseline" page. Displays buttons for the user
+	 * 	so they can create a hash for whichever directory or file they choose.
+	 * 	Returns the scene.
+	 */
 	public Scene createNewBaseline() {
 		
 		root = new StackPane();
@@ -331,6 +361,7 @@ class fimGUI implements EventHandler<ActionEvent> {
 		
 		
 		createNBL =  new Scene(root, 1600, 700);
+		// fetching CSS resource
 		createNBL.getStylesheets().add(getClass().getResource("Resources/vista-button.css").toExternalForm());
 		
 		chooseFile.setFont(segoeBold);
@@ -357,9 +388,14 @@ class fimGUI implements EventHandler<ActionEvent> {
 		
 	}
 	
+	
+	/*
+	 * 	Method is used to give user the ability to select a file to hash.
+	 */
 	private void chooseFile() {
 		
 		FileChooser fileChooser = new FileChooser();
+		// select a file (plan to make selection of multiple files available in later rendition of program, hence the list)
 		List<File> selectedFiles = fileChooser.showOpenMultipleDialog(null);
 		
 		FIMApp.hashedFile fileHashed = new FIMApp.hashedFile();
@@ -368,20 +404,25 @@ class fimGUI implements EventHandler<ActionEvent> {
 		if (selectedFiles != null && !selectedFiles.isEmpty()) {
 			
 			for (File file : selectedFiles) {
-				fileHashed.accessHashFile(file);
+				fileHashed.accessHashFile(file);						// hash file method called with file as argument
 			}
 			output.setText("Hash created, new baseline for file");
 		}
 		
 		else {
 			output.setText("No file selected.");
-		}
-		
+		}	
 	}
 	
+	
+	/*
+	 * 	Method is used to give user the ability to select a directory whose
+	 * 	files it will hash and create a baseline for.
+	 */
 	private void chooseDirectory() {
 
 	    	DirectoryChooser dirChooser = new DirectoryChooser();
+	    	// select a directory
 	    	File selectedDir = dirChooser.showDialog(null);
 	    	
 	    	FIMApp.hashedFile fileHashed = new FIMApp.hashedFile();
@@ -390,8 +431,8 @@ class fimGUI implements EventHandler<ActionEvent> {
 	    		File[] filesInDir = selectedDir.listFiles();
 	    		if (filesInDir != null) {
 	    			for (File file : filesInDir) {
-	    				if (file.isFile()) {
-	    					fileHashed.accessHashFile(file);
+	    				if (file.isFile()) {							// make sure file is a file and not another directory
+	    					fileHashed.accessHashFile(file);			// hash file method called with file as argument
 	    				}
 	    			}
 	    		}
@@ -401,9 +442,14 @@ class fimGUI implements EventHandler<ActionEvent> {
 	    	else {
 	    		output.setText("No directory selected.");
 	    	}
-	    	
 	}
 	
+	
+	/*
+	 * 	Method is used to create a button.
+	 * 	Sets buttons title, style, width, and action.
+	 * 	Returns button.
+	 */
 	public Button createButton(Button newButton, String title, String styleClass, int minWidth) {
 		
 		newButton.setText(title);
@@ -414,10 +460,13 @@ class fimGUI implements EventHandler<ActionEvent> {
 		return newButton;
 		
 	}
-
+	
+	/*
+	 * 	Method handles action events (button clicks),
+	 * 	switches scenes based on what button is clicked.
+	 */
 	@Override
 	public void handle(ActionEvent event) {
-		// TODO Auto-generated method stub
 		
 		
 		if (event.getSource() == viewAndCompBaseline) {
